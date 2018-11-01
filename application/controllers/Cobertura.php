@@ -22,6 +22,7 @@ class Cobertura extends CI_Controller
 	
 		public function Cadastrar()
 		{
+
 			$dados = array(
 				'titulo'=>'Formulário de Cobertura',
 				'pagina'=>'cobertura/cadastrar.php' 
@@ -32,9 +33,17 @@ class Cobertura extends CI_Controller
 		public function Incluir()
 		{
 			/*Campo de validação*/
-			$this->load->model('CoberturaModel');
-			$this->CoberturaModel->Inserir();
+			$this->form_validation->set_rules('descricao', 'Descrição', 'trim|required|regex_match[/[\p{L}]+$/i]|max_length[45]|is_unique[cobertura.descricao]');
 
+			if( $this->form_validation->run())
+			{
+				$this->load->model('CoberturaModel');
+				$this->CoberturaModel->Inserir();
+			}
+			else
+			{
+				$this->load->view('cobertura/cadastrar');
+			}
 			redirect('cobertura'); // redireciona para o controller
 		}
 
@@ -56,22 +65,30 @@ class Cobertura extends CI_Controller
 
 		public function SalvarAlterar()
 		{
-			$idcobertura = $this->input->post('idcobertura');
-			$descricao = $this->input->post('descricao');
-		
+			$this->form_validation->set_rules('descricao', 'Descrição', 'trim|required|regex_match[/[\p{L}]+$/i]|max_length[45]|is_unique[cobertura.descricao]');
 
-			$dados = array(
-				'descricao'=>$descricao
-				
-			);
+			if( $this->form_validation->run())
+			{
+				$idcobertura = $this->input->post('idcobertura');
+				$descricao = $this->input->post('descricao');
+			
 
-			$where = array(
-				'idcobertura'=>$idcobertura
-			);
-			$this->load->model('CoberturaModel');
+				$dados = array(
+					'descricao'=>$descricao
+					
+				);
 
-			$this->CoberturaModel->SalvarAlteracao($where, $dados);
+				$where = array(
+					'idcobertura'=>$idcobertura
+				);
+				$this->load->model('CoberturaModel');
 
+				$this->CoberturaModel->SalvarAlteracao($where, $dados);
+		}
+			else
+			{
+				$this->load->view('cobertura/alterar');
+			}
 			redirect('cobertura');
 		}
 

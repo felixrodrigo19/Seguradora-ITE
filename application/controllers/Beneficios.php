@@ -32,9 +32,18 @@ class Beneficios extends CI_Controller
 		public function Incluir()
 		{
 			/*Campo de validação*/
-			$this->load->model('BeneficiosModel');
-			$this->BeneficiosModel->Inserir();
+			$this->form_validation->set_rules('descricao', 'Descrição', 'trim|required|regex_match[/[\p{L} ]+$/i]|max_length[45]|is_unique[beneficios.descricao]');
+			$this->form_validation->set_rules('ativo', 'Ativo', 'required');
 
+			if( $this->form_validation->run())
+			{
+				$this->load->model('BeneficiosModel');
+				$this->BeneficiosModel->Inserir();
+			}
+			else
+			{
+				$this->load->view('beneficios/cadastrar');
+			}
 			redirect('beneficios'); // redireciona para o controller
 		}
 
@@ -56,22 +65,32 @@ class Beneficios extends CI_Controller
 
 		public function SalvarAlterar()
 		{
-			$idbeneficios = $this->input->post('idbeneficios');
-			$descricao = $this->input->post('descricao');
-			$ativo = $this->input->post('ativo');
 
-			$dados = array(
-				'descricao'=>$descricao,
-				'ativo'=>$ativo
-			);
+			$this->form_validation->set_rules('descricao', 'Descrição', 'trim|required|regex_match[/[\p{L}]+$/i]|max_length[45]|is_unique[beneficios.descricao]');
+			$this->form_validation->set_rules('ativo', 'Ativo', 'required');
 
-			$where = array(
-				'idbeneficios'=>$idbeneficios
-			);
-			$this->load->model('BeneficiosModel');
+			if( $this->form_validation->run())
+			{
+				$idbeneficios = $this->input->post('idbeneficios');
+				$descricao = $this->input->post('descricao');
+				$ativo = $this->input->post('ativo');
 
-			$this->BeneficiosModel->SalvarAlteracao($where, $dados);
+				$dados = array(
+					'descricao'=>$descricao,
+					'ativo'=>$ativo
+				);
 
+				$where = array(
+					'idbeneficios'=>$idbeneficios
+				);
+				$this->load->model('BeneficiosModel');
+
+				$this->BeneficiosModel->SalvarAlteracao($where, $dados);
+			}
+			else
+			{
+				$this->load->view('beneficios/alterar');
+			}
 			redirect('beneficios');
 		}
 

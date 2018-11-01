@@ -22,24 +22,34 @@ class Parentesco extends CI_Controller
 	
 		public function Cadastrar()
 		{
+
 			$dados = array(
-				'titulo'=>'Formulário de Cadastro',
-				'pagina'=>'parentesco/cadastrar.php' 
-			);
-			$this->load->view('cparentesco',$dados);
+					'titulo'=>'Formulário de Cadastro',
+					'pagina'=>'parentesco/cadastrar.php' 
+				);
+				$this->load->view('cparentesco',$dados);
 		}
 
 		public function Incluir()
 		{
 			/*Campo de validação*/
-			$this->load->model('ParentescoModel');
-			$this->ParentescoModel->Inserir();
+			$this->form_validation->set_rules('descricao', 'Descrição', 'trim|required|regex_match[/[\p{L}]+$/i]|max_length[45]|is_unique[parentesco.descricao]');
 
+			if( $this->form_validation->run())
+			{
+				$this->load->model('ParentescoModel');
+				$this->ParentescoModel->Inserir();
+			}
+			else
+			{
+				$this->load->view('parentesco/cadastrar');
+			}
 			redirect('parentesco'); // redireciona para o controller
 		}
 
 		public function Alterar($codigo)
 		{
+
 			$this->load->model('ParentescoModel');
 
 			$where = array('idparentesco'=>$codigo);
@@ -56,22 +66,30 @@ class Parentesco extends CI_Controller
 
 		public function SalvarAlterar()
 		{
-			$idparentesco = $this->input->post('idparentesco');
-			$descricao = $this->input->post('descricao');
-		
+			$this->form_validation->set_rules('descricao', 'Descrição', 'trim|required|regex_match[/[\p{L}]+$/i]|max_length[45]|is_unique[parentesco.descricao]');
 
-			$dados = array(
-				'descricao'=>$descricao
-				
-			);
+			if( $this->form_validation->run())
+			{
+				$idparentesco = $this->input->post('idparentesco');
+				$descricao = $this->input->post('descricao');
+			
 
-			$where = array(
-				'idparentesco'=>$idparentesco
-			);
-			$this->load->model('ParentescoModel');
+				$dados = array(
+					'descricao'=>$descricao
+					
+				);
 
-			$this->ParentescoModel->SalvarAlteracao($where, $dados);
+				$where = array(
+					'idparentesco'=>$idparentesco
+				);
+				$this->load->model('ParentescoModel');
 
+				$this->ParentescoModel->SalvarAlteracao($where, $dados);
+			}
+			else
+			{
+				$this->load->view('parentesco/alterar');
+			}
 			redirect('parentesco');
 		}
 
