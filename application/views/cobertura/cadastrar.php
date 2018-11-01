@@ -1,4 +1,5 @@
 <h1><?php echo $titulo; ?></h1>
+<?php echo validation_errors(); ?>
 <?php echo form_open('cobertura/incluir'); ?>
 
 	<label>Descrição</label>

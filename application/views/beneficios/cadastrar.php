@@ -1,4 +1,5 @@
 <h1><?php echo $titulo; ?></h1>
+<?php echo validation_errors(); ?>
 <?php echo form_open('beneficios/incluir'); ?>
 
 	<label>Descrição</label>
@@ -8,8 +9,12 @@
 	<br/>
 
 	<label>Ativo</label>
-	<input type='number' name='ativo' min="0" max="1">
-
+	<br/>
+	
+	<select name="ativo">
+		<option value="0">Não Ativo</option>
+		<option value="1">Ativo</option>
+	</select>
 	<br/>
 	<br/>
 
